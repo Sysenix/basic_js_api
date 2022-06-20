@@ -19,13 +19,6 @@ console.log('Server started at http://%s:%d/', config.host, config.port);
 
 app.get('/', (req, res) => {
     res.send("Everything is working...").status(200);
-    try {
-        if (res.statusCode >= 200){
-            res.send(" Try to send query string parameters");
-        };
-    } catch (error) {
-        console.log(error.message);
-    }
     const query = req.query
     if(query.length > 0){console.log(query);};
 });
