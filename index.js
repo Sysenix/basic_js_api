@@ -1,9 +1,14 @@
 const express = require('express'); 
 const bcrypt = require ('bcrypt');
 const jwt = require('jsonwebtoken');
-const db = require("./dbConnection.js");
-//const res = require('express/lib/response');
+//const db = require("./dbConnection.js");
 
+const sdb = require('./models');
+const User = sdb.User;
+/*
+sdb.sequelize.sync({force: true}).then(()=> {
+    console.log('Drop and Resync database');
+});*/
 
 
 const app = express();
@@ -76,8 +81,24 @@ app.post('/register', async (req, res) => {
     if (!user_name && !password) {
         res.status(400).send('All input required');
     }
+    // database chech if exists
+    User.findOne({where: {username: user_name}}).then(async(user) => {
+        if(user){
+            return res.status(400).send({message: 'This user name already exists.'});
 
+        }else{
+            const passwordHash = await bcrypt.hash(password, 10);
+            User.create({username: user_name, password: passwordHash}).then((user) => {
+                const token = jwt.sign(
+                    {username: user_name}, "secretkey", {expiresIn: "1h"}
+                );
+                return res.status(201).send({success: true, message: {username: user_name, token: token}})
+
+            })
+        }
+    });
     //data base check if exists
+    /* here is pure sql query you can use that one also
     db.query(`SELECT * FROM users WHERE user_name = '${user_name}'`,async (error, result)=> {
         if (error) throw error;
         if(result.length > 0){
@@ -98,7 +119,7 @@ app.post('/register', async (req, res) => {
                 return res.status(201).send({success: true, message: {username: user_name, token: token}})
             });
         }
-    })
+    });*/
 
 });
 
@@ -109,6 +130,31 @@ app.post('/login', (req, res) => {
         res.status(400).send('All input required');
     }
 
+    User.findOne({where: {username: user_name}}).then((user) => {
+        if(user){
+            bcrypt.compare(password, user.password, (bErr, bbResult)=>{
+                if(bErr){
+                    throw bErr;
+                    return res.status(401).send({success: false, message: 'Email or password incorrect!'});
+                    
+                }
+                if(bbResult){
+                    const token = jwt.sign(
+                        {username: user_name}, "secretkey", {expiresIn: "1m"}
+                    );
+                    return res.status(200).send({success: true, message: {username: user_name, token: token}})
+                }
+                return res.status(401).send({success: false, message:'User name or password incorrect !'})
+            });
+        }else{
+            return res.status(400).send({
+                success: false,
+                message: 'User name does not exist'
+            });
+        }
+
+    });
+    /*
     db.query(`SELECT * FROM users WHERE user_name = '${user_name}'`,
     (error, result) => {    
         if (error){
@@ -138,7 +184,7 @@ app.post('/login', (req, res) => {
             }
             return res.status(401).send({success: false, message:'User name or password incorrect !'})
         });
-        /*
+        
         if(checkUser(user_name, password)){
             //login success
             const token = jwt.sign(
@@ -148,13 +194,13 @@ app.post('/login', (req, res) => {
                 username: user_name,
                 token: token
             }})
-        }*/
+        }
 
 
-    }
-    )
+    });
+    */
 
-    return res.status(500)
+    return res.status(500);
 
 });
 
@@ -179,10 +225,19 @@ async function verifyToken(req, res, next) {
 }
 
 app.post('/test', verifyToken, (req, res) => {
+    User.findOne({where: {username: req.decoded.username}}).then((response) => {
+        if(response){
+            const {id, username, createdAt, updatedAt} = response
+            return res.send({ success: true, data: {id, username, createdAt, updatedAt}, message: 'Fetch Successfully.' });
+        }else{
+            return res.send({ success: false, message: 'Something went wrong !'})
+        }
+    });
+    /*
     db.query('SELECT * FROM users where user_name=?', req.decoded.username, function (error, results) {
     if (error) throw error;
     return res.send({ success: true, data: results[0], message: 'Fetch Successfully.' });
-    });
+    });*/
 });
 
 app.listen(config.port,config.host, () =>{
