@@ -3,4 +3,5 @@ In this api, i have created basic javascript authentication example by using the
 -JWT
 -Sequelize
 -MySQL
+
 There is also sql queries as well.
