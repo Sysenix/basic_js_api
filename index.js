@@ -7,6 +7,7 @@ const sdb = require('./models');
 const User = sdb.User;
 
 /*
+t
 sdb.sequelize.sync({force: true}).then(()=> {
     console.log('Drop and Resync database');
 });*/
