@@ -5,6 +5,7 @@ const jwt = require('jsonwebtoken');
 
 const sdb = require('./models');
 const User = sdb.User;
+
 /*
 sdb.sequelize.sync({force: true}).then(()=> {
     console.log('Drop and Resync database');
