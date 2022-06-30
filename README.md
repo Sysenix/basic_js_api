@@ -6,4 +6,4 @@ In this api, i have created basic javascript authentication example by using the
 - express
 - MySQL
 
-There is also sql queries as well as comment lines.
+It also contains sql queries as a comment line.
