@@ -1,4 +1,9 @@
 const router = require('express').Router();
+const bcrypt = require ('bcrypt');
+const jwt = require('jsonwebtoken');
+
+const {User} = require('../../models');
+
 /* 
 HTTP request that used;
 201 - Created
@@ -27,10 +32,10 @@ router.post('/register', async (req, res) => {
             })
         }
     });
-    return res.status(500).end();
+    return res.status(500);
 
 });
-
+module.exports = router;
 //data base check if exists sql query
     /* here is pure sql query you can use that one also
     db.query(`SELECT * FROM users WHERE user_name = '${user_name}'`,async (error, result)=> {

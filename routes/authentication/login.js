@@ -1,5 +1,7 @@
 const router = require('express').Router();
-
+const bcrypt = require ('bcrypt');
+const jwt = require('jsonwebtoken');
+const {User} = require('../../models');
 /* 
 HTTP request that used;
 200 - OK
@@ -54,9 +56,10 @@ router.post('/login', (req, res) => {
 
     });
  
-    return res.status(500).end();
+    return res.status(500);
 
 });
+module.exports = router;
 
 
    /*

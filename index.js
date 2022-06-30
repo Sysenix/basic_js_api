@@ -3,6 +3,7 @@ const bcrypt = require ('bcrypt');
 const jwt = require('jsonwebtoken');
 //const db = require("./dbConnection.js");
 const register = require('./routes/authentication/register.js');
+const login = require('./routes/authentication/login.js');
 
 const sdb = require('./models');
 const User = sdb.User;

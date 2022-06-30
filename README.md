@@ -1,7 +1,9 @@
 # basic_js_api
 In this api, i have created basic javascript authentication example by using the following;
--JWT
--Sequelize
--MySQL
+- JWT
+- bcrypt
+- Sequelize
+- express
+- MySQL
 
-There is also sql queries as well.
+There is also sql queries as well as comment lines.
